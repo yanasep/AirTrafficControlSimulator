@@ -47,14 +47,14 @@ namespace AirTraffic.Main
             foreach (var (airplane, tracker) in pathTracers)
             {
                 if (!airplane.IsMoving) continue;
-                
-                var nextPos = tracker.Step(airplane.Speed * dt);
-                var dir = (nextPos - airplane.transform.position).normalized;
-                if (dir.sqrMagnitude > 0.001f) airplane.Turn(dir);
+
+                var (nextPos, nextDir) = tracker.Step(airplane.Speed * dt);
+                airplane.transform.rotation = Quaternion.LookRotation(nextDir, Vector3.back);
+                airplane.transform.position = nextPos;
 
                 if (tracker.IsEnd)
                 {
-                    airplane.Stop();
+                    airplane.IsMoving = false;
                     RestartPathAsync(airplane, tracker).Forget();
                 }
             }
@@ -96,11 +96,13 @@ namespace AirTraffic.Main
             {
                 path = pathSettings.Pathes[Random.Range(0, pathSettings.Pathes.Length)];
             } while (path == prevPath);
+
             prevPath = path;
 
             tracker.Init(path, reverse: Random.value >= 0.5f);
             airplane.transform.position = tracker.StartPosition;
-            airplane.MoveStart(tracker.StartTangent);
+            airplane.transform.rotation = Quaternion.LookRotation(tracker.StartTangent, Vector3.back);
+            airplane.IsMoving = true;
         }
     }
 }

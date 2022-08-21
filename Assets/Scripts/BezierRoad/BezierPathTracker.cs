@@ -28,7 +28,7 @@ namespace MeshGeneration
 
             StartPosition = points[0];
             StartTangent = tangents[0];
-            
+
             Reset();
         }
 
@@ -39,7 +39,7 @@ namespace MeshGeneration
             IsEnd = false;
         }
 
-        public Vector3 Step(float maxDistanceDelta)
+        public (Vector3 position, Vector3 tangent) Step(float maxDistanceDelta)
         {
             var prev = points[pointIndex];
             float deltaRemain = maxDistanceDelta;
@@ -64,11 +64,20 @@ namespace MeshGeneration
             if (pointIndex >= points.Length - 1)
             {
                 IsEnd = true;
-                return points[^1];
+                return (points[^1], tangents[^1]);
             }
 
+            float posRate = pointDelta / (points[pointIndex + 1] - points[pointIndex]).magnitude;
+            if (float.IsNaN(posRate)) posRate = 1;
 
-            return Vector3.MoveTowards(points[pointIndex], points[pointIndex + 1], pointDelta);
+            var pos = Vector3.Lerp(points[pointIndex], points[pointIndex + 1], posRate);
+
+            var prevAngle = Vector3.SignedAngle(Vector3.up, tangents[pointIndex], Vector3.back);
+            var newAngle = Vector3.SignedAngle(Vector3.up, tangents[pointIndex + 1], Vector3.back);
+            var angle = Mathf.LerpAngle(prevAngle, newAngle, posRate);
+            var tan = Quaternion.AngleAxis(angle, Vector3.back) * Vector3.up;
+
+            return (pos, tan);
         }
     }
 }
