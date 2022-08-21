@@ -11,7 +11,9 @@ namespace AirTraffic.Main
     public class AirplaneSplineFollowSystem : IGameSystem, IUpdateSystem
     {
         private readonly Main.PathSettings pathSettings;
+
         private readonly Dictionary<Airplane, BezierPathTracker> pathTracers = new();
+
         private readonly CompositeDisposable disposables = new();
         private bool isStarted;
         private BezierPath prevPath;
@@ -48,9 +50,9 @@ namespace AirTraffic.Main
             {
                 if (!airplane.IsMoving) continue;
 
-                var (nextPos, nextDir) = tracker.Step(airplane.Speed * dt);
-                airplane.transform.rotation = Quaternion.LookRotation(nextDir, Vector3.back);
-                airplane.transform.position = nextPos;
+                var (nextPos, _) = tracker.Step(airplane.Speed * dt);
+                airplane.Turn((nextPos - airplane.transform.position).normalized);
+                airplane.OnUpdate();
 
                 if (tracker.IsEnd)
                 {
@@ -83,6 +85,8 @@ namespace AirTraffic.Main
 
         private async UniTask RestartPathAsync(Airplane airplane, BezierPathTracker tracker)
         {
+            airplane.Stop();
+
             await UniTask.Delay(TimeSpan.FromSeconds(pathSettings.RestartDelay));
             if (disposables.IsDisposed) return;
 
@@ -101,7 +105,7 @@ namespace AirTraffic.Main
 
             tracker.Init(path, reverse: Random.value >= 0.5f);
             airplane.transform.position = tracker.StartPosition;
-            airplane.transform.rotation = Quaternion.LookRotation(tracker.StartTangent, Vector3.back);
+            airplane.MoveStart(tracker.StartTangent);
             airplane.IsMoving = true;
         }
     }
