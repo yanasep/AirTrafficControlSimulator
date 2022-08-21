@@ -51,7 +51,7 @@ namespace AirTraffic.Main
 
         private void OnDestroy()
         {
-            trailLinePool.Dispose();
+            trailLinePool?.Dispose();
         }
     }
 }

@@ -4,13 +4,15 @@ using Cysharp.Threading.Tasks;
 using MeshGeneration;
 using ECS;
 using UnityEngine;
+using VContainer;
 using Random = UnityEngine.Random;
 
 namespace AirTraffic.Main
 {
-    public class AirplaneSplineFollowSystem : IGameSystem, IUpdateSystem
+    [DisallowMultipleComponent]
+    public class AirplaneSplineFollowSystem : MonoBehaviour, IGameSystem, IUpdateSystem
     {
-        private readonly Main.PathSettings pathSettings;
+        [SerializeField] Main.PathSettings pathSettings;
 
         private readonly Dictionary<Airplane, BezierPathTracker> pathTracers = new();
 
@@ -18,11 +20,9 @@ namespace AirTraffic.Main
         private bool isStarted;
         private BezierPath prevPath;
 
-        public AirplaneSplineFollowSystem(Main.PathSettings pathSettings, MainObjectState objectState,
-            MessageHub messageHub)
+        [Inject]
+        public void Init(MainObjectState objectState, MessageHub messageHub)
         {
-            this.pathSettings = pathSettings;
-
             foreach (var airplane in objectState.Airplanes.Values)
             {
                 OnAddAirplane(airplane);
@@ -100,7 +100,7 @@ namespace AirTraffic.Main
             BezierPath path;
             do
             {
-                path = pathSettings.Pathes[Random.Range(0, pathSettings.Pathes.Length)];
+                path = pathSettings.Paths[Random.Range(0, pathSettings.Paths.Length)];
             } while (path == prevPath);
 
             prevPath = path;

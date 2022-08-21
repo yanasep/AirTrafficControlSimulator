@@ -1,22 +1,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using AirTraffic.Main.UI;
 using Cysharp.Threading.Tasks;
 using ECS;
 using MeshGeneration;
 using UnityEngine;
+using VContainer;
+using VContainer.Unity;
 
 namespace AirTraffic.Main
 {
-    public class Main : MonoBehaviour
+    public class Main : LifetimeScope
     {
         [SerializeField] private Airplane airplaneBase;
-        [SerializeField] private AirplaneControlUI airplaneControlUI;
-        [SerializeField] private BezierPath splinePath;
-        [SerializeField] private AirplaneLabelUI labelUI;
         [SerializeField] private AirplaneSpawnSetting[] spawnSettings;
-        [SerializeField] private PathSettings pathSettings;
 
         private MainObjectState mainObjectState;
         private MessageHub messageHub;
@@ -28,24 +27,28 @@ namespace AirTraffic.Main
             public string AirplaneName;
             public float Delay;
         }
-        
+
         [Serializable]
         public class PathSettings
         {
-            public BezierPath[] Pathes;
+            public BezierPath[] Paths;
             public float RestartDelay;
+        }
+
+        protected override void Configure(IContainerBuilder builder)
+        {
+            builder.RegisterInstance(messageHub);
+            builder.RegisterInstance(mainObjectState);
         }
 
         private void Start()
         {
             messageHub = new MessageHub();
             mainObjectState = new MainObjectState(messageHub);
-            masterSystem = new MasterSystem(
-                new AirplaneSplineFollowSystem(pathSettings, mainObjectState, messageHub),
-                new AirplaneLabelUISystem(labelUI, messageHub, mainObjectState)
-                // new AirplaneControlSystem(mainObjectState, messageHub)
-                // new AirplaneControlUISystem(airplaneControlUI, messageHub, mainObjectState)
-            );
+
+            Build();
+
+            masterSystem = new MasterSystem(GetComponents<IGameSystem>());
 
             messageHub.Event.Publish(new OnGameStartEvent());
 
@@ -62,8 +65,9 @@ namespace AirTraffic.Main
             masterSystem.Update();
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
             masterSystem.Dispose();
         }
 

@@ -1,24 +1,26 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
 using ECS;
+using UnityEngine;
+using VContainer;
 
 namespace AirTraffic.Main.UI
 {
-    public class AirplaneControlUISystem : IGameSystem
+    [DisallowMultipleComponent]
+    public class AirplaneControlUISystem : MonoBehaviour, IGameSystem
     {
-        private readonly AirplaneControlUI airplaneControlUI;
-        private readonly MessageHub messageHub;
-        private readonly MainObjectState objectState;
+        [SerializeField] private AirplaneControlUI airplaneControlUI;
+        private MessageHub messageHub;
+        private MainObjectState objectState;
         private readonly CompositeDisposable disposables = new();
 
         private const float CommandDelay = 1f;
 
         private OnControlInputEvent controlInputEventData;
 
-        public AirplaneControlUISystem(AirplaneControlUI airplaneControlUI, MessageHub messageHub,
-            MainObjectState objectState)
+        [Inject]
+        public void Init(MessageHub messageHub, MainObjectState objectState)
         {
-            this.airplaneControlUI = airplaneControlUI;
             this.messageHub = messageHub;
             this.objectState = objectState;
 

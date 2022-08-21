@@ -1,17 +1,20 @@
 ﻿using ECS;
+using UnityEngine;
+using VContainer;
 
 namespace AirTraffic.Main.UI
 {
-    public class AirplaneLabelUISystem : IGameSystem
+    [DisallowMultipleComponent]
+    public class AirplaneLabelUISystem : MonoBehaviour, IGameSystem
     {
-        private readonly AirplaneLabelUI labelUI;
-        private readonly MessageHub messageHub;
-        private readonly MainObjectState objectState;
+        [SerializeField] private AirplaneLabelUI labelUI;
+        private MessageHub messageHub;
+        private MainObjectState objectState;
         private readonly CompositeDisposable disposables = new();
 
-        public AirplaneLabelUISystem(AirplaneLabelUI labelUI, MessageHub messageHub, MainObjectState objectState)
+        [Inject]
+        public void Init(MessageHub messageHub, MainObjectState objectState)
         {
-            this.labelUI = labelUI;
             this.messageHub = messageHub;
             this.objectState = objectState;
 
