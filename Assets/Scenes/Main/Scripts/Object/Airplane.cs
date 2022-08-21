@@ -4,9 +4,9 @@ namespace AirTraffic.Main
 {
     public class Airplane : MonoBehaviour
     {
-        [field: SerializeField] public float Speed { get; private set; } = 0.2f;
-        [SerializeField] private float TurnBrakeRate = 0.5f;
-        [SerializeField] private float angleSpeed = 20;
+        [SerializeField] public float Speed = 0.2f;
+        [SerializeField] private float turnBrakeRate = 0.5f;
+        [SerializeField] public float AngleSpeed = 20;
 
         public bool IsMoving { get; set; }
         private bool isTurning;
@@ -16,7 +16,7 @@ namespace AirTraffic.Main
 
         private readonly Vector3 upward = Vector3.back;
 
-        public float CurrentSpeed => isTurning ? Speed * TurnBrakeRate : Speed;
+        public float CurrentSpeed => isTurning ? Speed * turnBrakeRate : Speed;
 
         public void OnUpdate()
         {
@@ -81,7 +81,7 @@ namespace AirTraffic.Main
 
         private void TurnMovementUpdate(float deltaTime)
         {
-            float angleDelta = angleSpeed * deltaTime * (int)turnDir;
+            float angleDelta = AngleSpeed * deltaTime * (int)turnDir;
 
             if (Mathf.Abs(angleDelta) >= turnRemainingAngle)
             {
@@ -94,7 +94,7 @@ namespace AirTraffic.Main
                 transform.rotation = Quaternion.AngleAxis(-(int)turnDir * turnRemainingAngle, upward) * targetRotation;
             }
 
-            transform.position += Speed * TurnBrakeRate * deltaTime * transform.forward;
+            transform.position += Speed * turnBrakeRate * deltaTime * transform.forward;
         }
     }
 }

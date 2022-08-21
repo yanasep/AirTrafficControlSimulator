@@ -50,9 +50,11 @@ namespace AirTraffic.Main
             {
                 if (!airplane.IsMoving) continue;
 
-                var (nextPos, _) = tracker.Step(airplane.Speed * dt);
-                airplane.Turn((nextPos - airplane.transform.position).normalized);
-                airplane.OnUpdate();
+                var (nextPos, nextDir) = tracker.Step(airplane.Speed * dt);
+                var forward = Vector3.RotateTowards(airplane.transform.forward,
+                    (nextPos - airplane.transform.position).normalized, airplane.AngleSpeed * Mathf.Deg2Rad * dt, 0);
+                var rot = Quaternion.LookRotation(forward, Vector3.back);
+                airplane.transform.SetPositionAndRotation(nextPos, rot);
 
                 if (tracker.IsEnd)
                 {
@@ -105,7 +107,7 @@ namespace AirTraffic.Main
 
             tracker.Init(path, reverse: Random.value >= 0.5f);
             airplane.transform.position = tracker.StartPosition;
-            airplane.MoveStart(tracker.StartTangent);
+            airplane.transform.rotation = Quaternion.LookRotation(tracker.StartTangent, Vector3.back);
             airplane.IsMoving = true;
         }
     }
