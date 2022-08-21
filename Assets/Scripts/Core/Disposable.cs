@@ -31,6 +31,7 @@ public static class DisposableExtensions
 public class CompositeDisposable : IDisposable, IEnumerable<IDisposable>
 {
     private List<IDisposable> disposables = new();
+    public bool IsDisposed => disposables == null;
 
     public void Add(IDisposable disposable)
     {
