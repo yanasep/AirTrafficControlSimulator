@@ -10,7 +10,8 @@ namespace AirTraffic.Main.UI
         [SerializeField] private RectTransform positionRect;
         [SerializeField] private RectTransform lineRect;
         [SerializeField] private Vector2 positionOffset;
-        [SerializeField] private float lineLengthAdd;
+        [SerializeField] private float lineStartAdd;
+        [SerializeField] private float lineEndAdd;
         private Transform followWorld;
         private Camera mainCamera;
         private RectTransform canvasRectTransform;
@@ -45,10 +46,9 @@ namespace AirTraffic.Main.UI
             // line
             var center = GetRectTransformCenter(positionRect);
             var lineDir = (targetScreenPos - center).normalized;
-            var lineEnd = center - (Vector3)PointOnRect(positionRect.rect, lineDir);
-            float localScale = positionRect.localScale.x;
-            SetLinePosition(targetScreenPos + lineDir * (lineLengthAdd * localScale),
-                lineEnd - lineDir * (lineLengthAdd * localScale));
+            var lineEnd = center - positionRect.TransformVector(PointOnRect(positionRect.rect, lineDir));
+            SetLinePosition(targetScreenPos + canvasRectTransform.TransformVector(lineDir * lineStartAdd),
+                lineEnd - canvasRectTransform.TransformVector(lineDir * lineEndAdd));
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace AirTraffic.Main.UI
         {
             // 線の位置、長さ、向きをセット
             lineRect.position = startPos;
-            var diff = endPos - startPos;
+            var diff = positionRect.InverseTransformVector(endPos - startPos);
             var len = diff.magnitude;
             var size = lineRect.sizeDelta;
             size.y = len;
@@ -95,13 +95,10 @@ namespace AirTraffic.Main.UI
 
         public static Vector3 GetRectTransformCenter(RectTransform rectTransform)
         {
-            var position = rectTransform.position;
-            return position - new Vector3(
-                Mathf.Lerp(-rectTransform.rect.size.x / 2f, rectTransform.rect.size.x / 2f, rectTransform.pivot.x) *
-                rectTransform.transform.lossyScale.x,
-                Mathf.Lerp(-rectTransform.rect.size.y / 2f, rectTransform.rect.size.y / 2f, rectTransform.pivot.y) *
-                rectTransform.transform.lossyScale.y
-            );
+            var pivot = rectTransform.pivot;
+            var size = rectTransform.sizeDelta;
+            return rectTransform.position +
+                   rectTransform.TransformVector(new Vector3((0.5f - pivot.x) * size.x, (0.5f - pivot.y) * size.y, 0));
         }
 
         // https://answers.unity.com/questions/1221879/finding-point-on-a-bounds-2d-rectangle-using-its-c.html
