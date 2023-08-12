@@ -312,7 +312,7 @@ namespace MeshGeneration
                 // -------------- ハンドルの中心 -------------------
                 if (bezier.handleMode == BezierPath.HandleMode.Axis && lastSelectedId != handle.posId)
                 {
-                    Handles.FreeMoveHandle(handle.posId, handle.position, Quaternion.identity, bezier.handleSize,
+                    var fmh_315_75_638274549437548407 = Quaternion.identity; Handles.FreeMoveHandle(handle.posId, handle.position, bezier.handleSize,
                         Vector3.one * 0.5f, Handles.SphereHandleCap);
                 }
                 else
@@ -321,7 +321,7 @@ namespace MeshGeneration
                     switch (bezier.handleMode)
                     {
                         case BezierPath.HandleMode.Free:
-                            newPos = Handles.FreeMoveHandle(handle.posId, handle.position, Quaternion.identity,
+                            var fmh_324_92_638274549438733173 = Quaternion.identity; newPos = Handles.FreeMoveHandle(handle.posId, handle.position,
                                 bezier.handleSize, Vector3.one * 0.5f, Handles.SphereHandleCap);
                             break;
                         case BezierPath.HandleMode.Axis:
@@ -354,7 +354,7 @@ namespace MeshGeneration
                     // 制御点0 -----
                     if (bezier.handleMode == BezierPath.HandleMode.Axis && lastSelectedId != handle.c0Id)
                     {
-                        Handles.FreeMoveHandle(handle.c0Id, handle.control0, Quaternion.identity, bezier.handleSize,
+                        var fmh_357_78_638274549438740664 = Quaternion.identity; Handles.FreeMoveHandle(handle.c0Id, handle.control0, bezier.handleSize,
                             Vector3.one * 0.5f, Handles.SphereHandleCap);
                     }
                     else
@@ -363,7 +363,7 @@ namespace MeshGeneration
                         switch (bezier.handleMode)
                         {
                             case BezierPath.HandleMode.Free:
-                                control0Pos = Handles.FreeMoveHandle(handle.c0Id, handle.control0, Quaternion.identity,
+                                var fmh_366_100_638274549438746052 = Quaternion.identity; control0Pos = Handles.FreeMoveHandle(handle.c0Id, handle.control0,
                                     bezier.handleSize, Vector3.one * 0.5f, Handles.SphereHandleCap);
                                 break;
                             case BezierPath.HandleMode.Axis:
@@ -392,7 +392,7 @@ namespace MeshGeneration
                     // 制御点1 -----
                     if (bezier.handleMode == BezierPath.HandleMode.Axis && lastSelectedId != handle.c1Id)
                     {
-                        Handles.FreeMoveHandle(handle.c1Id, handle.control1, Quaternion.identity, bezier.handleSize,
+                        var fmh_395_78_638274549438750590 = Quaternion.identity; Handles.FreeMoveHandle(handle.c1Id, handle.control1, bezier.handleSize,
                             Vector3.one * 0.5f, Handles.SphereHandleCap);
                     }
                     else
@@ -401,7 +401,7 @@ namespace MeshGeneration
                         switch (bezier.handleMode)
                         {
                             case BezierPath.HandleMode.Free:
-                                control1Pos = Handles.FreeMoveHandle(handle.c1Id, handle.control1, Quaternion.identity,
+                                var fmh_404_100_638274549438757788 = Quaternion.identity; control1Pos = Handles.FreeMoveHandle(handle.c1Id, handle.control1,
                                     bezier.handleSize, Vector3.one * 0.5f, Handles.SphereHandleCap);
                                 break;
                             case BezierPath.HandleMode.Axis:

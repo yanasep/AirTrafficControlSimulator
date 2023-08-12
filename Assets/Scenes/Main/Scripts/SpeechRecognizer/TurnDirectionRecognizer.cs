@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_EDITOR || UNITY_WSA
+using System;
 using UnityEngine.Windows.Speech;
 
 namespace AirTraffic.Main
@@ -46,3 +47,4 @@ namespace AirTraffic.Main
         }
     }
 }
+#endif

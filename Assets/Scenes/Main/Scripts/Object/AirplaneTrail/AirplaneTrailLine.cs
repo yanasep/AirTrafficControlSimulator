@@ -12,7 +12,7 @@ namespace AirTraffic.Main
 
         private void Awake()
         {
-            animator.keepAnimatorControllerStateOnDisable = true;
+            animator.keepAnimatorStateOnDisable = true;
         }
 
         public async UniTask ShowAsync(float duration)

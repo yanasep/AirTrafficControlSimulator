@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_EDITOR || UNITY_WSA
+using System;
 using System.Linq;
 using UnityEngine.Windows.Speech;
 
@@ -58,3 +59,4 @@ namespace AirTraffic.Main
         }
     }
 }
+#endif
